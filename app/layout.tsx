@@ -8,8 +8,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Sweet Vibes Bakery",
-  description: "Artisan breads and pastries baked fresh daily with good vibes.",
+  title: "LAMT AI Demand Request Dashboard",
+  description: "Linde AMT AI Demand Request Dashboard for tracking requests, analytics, and notifications.",
 };
 
 export default function RootLayout({

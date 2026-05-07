@@ -32,6 +32,45 @@ export function useNotifications(userId?: string) {
   // Fetch existing notifications
   useEffect(() => {
     const fetchNotifications = async () => {
+      // Check for test mode
+      const testMode = localStorage.getItem('test_mode');
+      if (testMode === 'true') {
+        // Return mock notifications for test mode
+        const mockNotifications: Notification[] = [
+          {
+            id: '1',
+            user_id: '550e8400-e29b-41d4-a716-446655440000',
+            type: 'warning',
+            title: 'High Priority Request',
+            message: 'Server Hardware Upgrade request requires immediate attention',
+            read: false,
+            created_at: new Date().toISOString()
+          },
+          {
+            id: '2',
+            user_id: '550e8400-e29b-41d4-a716-446655440000',
+            type: 'success',
+            title: 'Request Completed',
+            message: 'Software License Renewal has been approved and completed',
+            read: true,
+            created_at: new Date(Date.now() - 86400000).toISOString()
+          },
+          {
+            id: '3',
+            user_id: '550e8400-e29b-41d4-a716-446655440000',
+            type: 'info',
+            title: 'New Request Submitted',
+            message: 'Network Infrastructure request has been submitted for review',
+            read: false,
+            created_at: new Date(Date.now() - 3600000).toISOString()
+          }
+        ];
+
+        setNotifications(mockNotifications);
+        setUnreadCount(mockNotifications.filter(n => !n.read).length);
+        return;
+      }
+
       if (!userId) return;
 
       const supabase = createClient();

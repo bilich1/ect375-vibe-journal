@@ -27,6 +27,14 @@ export function useRealtime({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Check for test mode - skip real-time subscriptions in test mode
+    const testMode = localStorage.getItem('test_mode');
+    if (testMode === 'true') {
+      setIsConnected(true);
+      setError(null);
+      return;
+    }
+
     const supabase = createClient();
 
     let subscription: any;

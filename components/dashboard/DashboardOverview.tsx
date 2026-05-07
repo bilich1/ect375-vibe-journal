@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDemands, DemandFilters } from '@/lib/hooks/useDemands';
 import { useAnalytics } from '@/lib/hooks/useAnalytics';
 import { useAuthContext } from '@/lib/auth/AuthContext';
@@ -15,11 +15,11 @@ export function DashboardOverview() {
   const [selectedPriority, setSelectedPriority] = useState<string>('');
 
   const { analytics, loading: analyticsLoading } = useAnalytics('overview', 30);
-  const currentFilters = {
+  const currentFilters = useMemo(() => ({
     ...filters,
     ...(selectedStatus && { status: selectedStatus }),
     ...(selectedPriority && { priority: selectedPriority }),
-  };
+  }), [filters, selectedStatus, selectedPriority]);
   const { demands, loading: demandsLoading } = useDemands(currentFilters);
 
   if (authLoading) {

@@ -12,6 +12,27 @@ export function useAuth() {
   });
 
   useEffect(() => {
+    // Check for test mode first - simplified for test mode
+    const testMode = localStorage.getItem('test_mode');
+    const testUser = localStorage.getItem('test_user');
+
+    if (testMode === 'true' && testUser) {
+      try {
+        const user = JSON.parse(testUser);
+        setAuthState({
+          user: user as User,
+          loading: false,
+          error: null,
+        });
+        return; // Exit early for test mode
+      } catch (error) {
+        console.error('Error parsing test user:', error);
+        localStorage.removeItem('test_mode');
+        localStorage.removeItem('test_user');
+      }
+    }
+
+    // Only run Supabase auth logic if not in test mode
     const supabase = createClient();
 
     // Check if user is already logged in
@@ -46,7 +67,7 @@ export function useAuth() {
         });
       }
     });
-  }, []);
+  }, []); // Empty dependency array
 
   return authState;
 }

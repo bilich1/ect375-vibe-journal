@@ -37,6 +37,81 @@ export function useDemands(filters?: DemandFilters) {
     const fetchDemands = async () => {
       try {
         setLoading(true);
+
+        // Check for test mode
+        const testMode = localStorage.getItem('test_mode');
+        if (testMode === 'true') {
+          // Return mock data for test mode
+          const mockDemands: DemandRequest[] = [
+            {
+              id: '1',
+              title: 'Server Hardware Upgrade',
+              description: 'Upgrade production database servers for better performance',
+              status: 'pending',
+              priority: 'high',
+              category: 'IT Infrastructure',
+              requester_id: '550e8400-e29b-41d4-a716-446655440000',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              users: { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Test User', email: 'test@linde.com' }
+            },
+            {
+              id: '2',
+              title: 'Software License Renewal',
+              description: 'Annual renewal for SAP ERP system',
+              status: 'in_progress',
+              priority: 'medium',
+              category: 'Software',
+              requester_id: '550e8400-e29b-41d4-a716-446655440000',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              users: { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Test User', email: 'test@linde.com' }
+            },
+            {
+              id: '3',
+              title: 'Network Infrastructure',
+              description: 'Install fiber optic cables in facility',
+              status: 'completed',
+              priority: 'low',
+              category: 'Infrastructure',
+              requester_id: '550e8400-e29b-41d4-a716-446655440000',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              users: { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Test User', email: 'test@linde.com' }
+            },
+            {
+              id: '4',
+              title: 'Security Patch Deployment',
+              description: 'Critical security updates needed',
+              status: 'delayed',
+              priority: 'critical',
+              category: 'Security',
+              requester_id: '550e8400-e29b-41d4-a716-446655440000',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              users: { id: '550e8400-e29b-41d4-a716-446655440000', name: 'Test User', email: 'test@linde.com' }
+            }
+          ];
+
+          // Apply filters if provided
+          let filteredDemands = mockDemands;
+          if (filters?.status) {
+            filteredDemands = filteredDemands.filter(d => d.status === filters.status);
+          }
+          if (filters?.priority) {
+            filteredDemands = filteredDemands.filter(d => d.priority === filters.priority);
+          }
+          if (filters?.category) {
+            filteredDemands = filteredDemands.filter(d => d.category === filters.category);
+          }
+
+          setDemands(filteredDemands);
+          setTotal(filteredDemands.length);
+          setError(null);
+          setLoading(false);
+          return;
+        }
+
         const params = new URLSearchParams();
         
         if (filters?.status) params.append('status', filters.status);

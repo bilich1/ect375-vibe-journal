@@ -11,6 +11,7 @@ import { TrendChart } from '@/components/dashboard/TrendChart';
 
 export function DashboardOverview() {
   const { user, loading: authLoading } = useAuthContext();
+  const [activeTab, setActiveTab] = useState<'overview' | 'requests' | 'analytics' | 'notifications' | 'settings'>('overview');
   const [filters, setFilters] = useState<DemandFilters>({});
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [selectedPriority, setSelectedPriority] = useState<string>('');
@@ -74,21 +75,25 @@ export function DashboardOverview() {
                 <p className="mt-2 text-sm text-slate-600">{user.role.replace('_', ' ').toUpperCase()}</p>
               </div>
               <div className="mt-8 grid gap-3">
-                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                  Overview
-                </button>
-                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                  Requests
-                </button>
-                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                  Analytics
-                </button>
-                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                  Notifications
-                </button>
-                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
-                  Settings
-                </button>
+                {[
+                  { id: 'overview', label: 'Overview' },
+                  { id: 'requests', label: 'Requests' },
+                  { id: 'analytics', label: 'Analytics' },
+                  { id: 'notifications', label: 'Notifications' },
+                  { id: 'settings', label: 'Settings' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`w-full rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm font-medium transition ${
+                      activeTab === tab.id
+                        ? 'bg-slate-200 text-slate-900 shadow-sm'
+                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -108,7 +113,9 @@ export function DashboardOverview() {
           </aside>
 
           <main className="space-y-6">
-            <section className="grid gap-4 lg:grid-cols-2">
+            {activeTab === 'overview' && (
+              <>
+                <section className="grid gap-4 lg:grid-cols-2">
               <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -234,6 +241,37 @@ export function DashboardOverview() {
                 <DemandTable demands={demands} loading={demandsLoading} />
               </div>
             </section>
+              </>
+            )}
+
+            {activeTab === 'requests' && (
+              <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">All Requests</p>
+                    <h2 className="mt-2 text-2xl font-semibold text-slate-950">Demand request management</h2>
+                  </div>
+                  <div className="grid gap-3 sm:auto-cols-max sm:grid-flow-col">
+                    <button className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:bg-slate-100">
+                      Export
+                    </button>
+                    <button className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                      Add request
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <DemandTable demands={demands} loading={demandsLoading} />
+                </div>
+              </section>
+            )}
+
+            {['analytics', 'notifications', 'settings'].includes(activeTab) && (
+              <section className="rounded-[2rem] border border-slate-200 bg-white p-12 text-center shadow-sm">
+                <h2 className="text-2xl font-semibold text-slate-900 capitalize">{activeTab}</h2>
+                <p className="mt-2 text-slate-500">This section is currently under construction.</p>
+              </section>
+            )}
           </main>
         </div>
       </div>

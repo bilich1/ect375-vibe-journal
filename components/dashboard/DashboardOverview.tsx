@@ -7,6 +7,7 @@ import { useAuthContext } from '@/lib/auth/AuthContext';
 import { ProtectedComponent } from '@/components/auth/ProtectedComponent';
 import { StatusCard, MetricCard, InsightItem } from '@/components/dashboard/Cards';
 import { DemandTable } from '@/components/dashboard/DemandTable';
+import { TrendChart } from '@/components/dashboard/TrendChart';
 
 export function DashboardOverview() {
   const { user, loading: authLoading } = useAuthContext();
@@ -42,239 +43,199 @@ export function DashboardOverview() {
   const insights = analytics?.insights || [];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)] px-4 py-6 lg:px-8">
-        {/* Sidebar */}
-        <aside className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl shadow-slate-950/20">
-          <div className="mb-8">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">LAMT Analytics</p>
-            <h2 className="mt-4 text-2xl font-bold text-white">Demand Intelligence</h2>
-            <p className="mt-3 text-sm text-slate-400">
-              Executive view of open demand requests, risk, and operational load.
-            </p>
-          </div>
-
-          <div className="space-y-4 border-t border-slate-800 pt-5">
-            <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Active requests</p>
-              <p className="mt-3 text-3xl font-semibold text-white">{stats.total}</p>
-              <p className="mt-2 text-sm text-slate-400">Total requests in the system</p>
+    <div className="min-h-screen bg-slate-100 text-slate-900">
+      <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mb-6 rounded-[2rem] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 p-8 text-white shadow-2xl shadow-slate-900/20">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-400">LAMT Analytics</p>
+              <h1 className="mt-4 text-4xl font-semibold tracking-tight">Demand Intelligence</h1>
+              <p className="mt-3 max-w-2xl text-slate-300">
+                Executive view of open demand requests, risk, and operational load across the enterprise.
+              </p>
             </div>
-            <div className="grid gap-3">
-              <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Critical</p>
-                <p className="mt-3 text-2xl font-semibold text-rose-400">{stats.critical}</p>
-              </div>
-              <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Delayed</p>
-                <p className="mt-3 text-2xl font-semibold text-amber-300">{stats.delayed}</p>
-              </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <button className="rounded-2xl border border-slate-600 bg-slate-950 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] transition hover:bg-slate-900">
+                Export
+              </button>
+              <button className="rounded-2xl bg-cyan-400 px-5 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-slate-950 transition hover:bg-cyan-300">
+                Share insights
+              </button>
             </div>
           </div>
+        </div>
 
-          <div className="mt-8 rounded-3xl border border-slate-800 bg-slate-950 p-4">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Navigation</p>
-            <nav className="mt-4 space-y-2">
-              {['Overview', 'Requests', 'Analytics', 'Notifications', 'Settings'].map((item) => (
-                <button
-                  key={item}
-                  className="w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-slate-200 transition-colors hover:bg-slate-800"
-                >
-                  {item}
-                </button>
-              ))}
-            </nav>
-          </div>
-        </aside>
-
-        {/* Main content */}
-        <main className="space-y-6">
-          <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl shadow-slate-950/20">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+          <aside className="space-y-6">
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <div>
-                <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Dashboard</p>
-                <h1 className="mt-3 text-3xl font-bold text-white">AI Demand Request Dashboard</h1>
-                <p className="mt-2 text-slate-400">
-                  Welcome, {user.name || user.email} • {user.role.replace('_', ' ').toUpperCase()}
-                </p>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Welcome back</p>
+                <h2 className="mt-4 text-2xl font-semibold text-slate-950">{user.name || user.email}</h2>
+                <p className="mt-2 text-sm text-slate-600">{user.role.replace('_', ' ').toUpperCase()}</p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
-                <button className="rounded-2xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm text-slate-200 transition hover:bg-slate-700">
-                  Export
+              <div className="mt-8 grid gap-3">
+                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+                  Overview
                 </button>
-                <button className="rounded-2xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">
-                  Share insights
+                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+                  Requests
                 </button>
-              </div>
-            </div>
-          </section>
-
-          <section className="grid gap-4 xl:grid-cols-6">
-            <StatusCard label="Total" value={stats.total} color="blue" icon="📊" />
-            <StatusCard label="Pending" value={stats.pending} color="yellow" icon="⏳" />
-            <StatusCard label="In Progress" value={stats.in_progress} color="blue" icon="⚙️" />
-            <StatusCard label="Completed" value={stats.completed} color="green" icon="✅" />
-            <StatusCard label="Delayed" value={stats.delayed} color="red" icon="🔴" />
-            <StatusCard label="Critical" value={stats.critical} color="purple" icon="🚨" />
-          </section>
-
-          <section className="grid gap-4 xl:grid-cols-[1.8fr_1fr]">
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl shadow-slate-950/15">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Performance</p>
-                  <h2 className="mt-3 text-2xl font-bold text-white">Demand velocity</h2>
-                </div>
-                <span className="rounded-2xl bg-slate-800 px-3 py-2 text-sm text-slate-300">
-                  Last 30 days
-                </span>
-              </div>
-
-              <div className="mt-8 space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm text-slate-400">
-                    <span>Pending</span>
-                    <span>25%</span>
-                  </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-slate-800">
-                    <div className="h-full w-3/5 rounded-full bg-cyan-500" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm text-slate-400">
-                    <span>In Progress</span>
-                    <span>17%</span>
-                  </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-slate-800">
-                    <div className="h-full w-2/5 rounded-full bg-blue-500" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm text-slate-400">
-                    <span>Completed</span>
-                    <span>49%</span>
-                  </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-slate-800">
-                    <div className="h-full w-1/2 rounded-full bg-emerald-500" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm text-slate-400">
-                    <span>Delayed</span>
-                    <span>9%</span>
-                  </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-slate-800">
-                    <div className="h-full w-1/5 rounded-full bg-rose-500" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-xl shadow-slate-950/15">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-500">AI Insights</p>
-                  <h2 className="mt-3 text-2xl font-bold text-white">Actionable alerts</h2>
-                </div>
-                <span className="text-sm text-slate-400">Updated just now</span>
-              </div>
-
-              <div className="mt-6 space-y-3">
-                {insights.length > 0 ? (
-                  insights.map((insight, idx) => (
-                    <InsightItem key={idx} type={insight.type} message={insight.message} />
-                  ))
-                ) : (
-                  <p className="text-slate-400">No insights available</p>
-                )}
-              </div>
-            </div>
-          </section>
-
-          <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-3xl border border-slate-800 bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Requests</p>
-                  <h2 className="mt-2 text-2xl font-bold text-slate-900">Demand requests table</h2>
-                </div>
-                <button className="rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
-                  Add request
+                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+                  Analytics
+                </button>
+                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+                  Notifications
+                </button>
+                <button className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100">
+                  Settings
                 </button>
               </div>
-
-              <div className="mt-6">
-                <DemandTable demands={demands} loading={demandsLoading} />
-              </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="rounded-3xl border border-slate-800 bg-white p-6 shadow-sm">
-                <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Filters</p>
-                <div className="mt-6 space-y-4">
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Quick summary</p>
+              <div className="mt-5 space-y-4">
+                <div className="rounded-3xl bg-slate-50 p-4">
+                  <p className="text-xs text-slate-500">Critical</p>
+                  <p className="mt-2 text-3xl font-semibold text-rose-600">{stats.critical}</p>
+                </div>
+                <div className="rounded-3xl bg-slate-50 p-4">
+                  <p className="text-xs text-slate-500">Delayed</p>
+                  <p className="mt-2 text-3xl font-semibold text-amber-600">{stats.delayed}</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <main className="space-y-6">
+            <section className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between gap-4">
                   <div>
-                    <label className="text-sm font-medium text-slate-700">Status</label>
-                    <select
-                      value={selectedStatus}
-                      onChange={(e) => setSelectedStatus(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900"
-                    >
-                      <option value="">All Statuses</option>
-                      <option value="pending">Pending</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="completed">Completed</option>
-                      <option value="delayed">Delayed</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">KPI Overview</p>
+                    <h2 className="mt-2 text-xl font-semibold text-slate-950">High level metrics</h2>
                   </div>
+                  <span className="rounded-2xl bg-slate-100 px-3 py-2 text-sm text-slate-600">Today</span>
+                </div>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <StatusCard label="Total" value={stats.total} color="blue" icon="📊" />
+                  <StatusCard label="Pending" value={stats.pending} color="yellow" icon="⏳" />
+                  <StatusCard label="Completed" value={stats.completed} color="green" icon="✅" />
+                  <StatusCard label="Critical" value={stats.critical} color="purple" icon="🚨" />
+                </div>
+              </div>
 
+              <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <label className="text-sm font-medium text-slate-700">Priority</label>
-                    <select
-                      value={selectedPriority}
-                      onChange={(e) => setSelectedPriority(e.target.value)}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900"
-                    >
-                      <option value="">All Priorities</option>
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="critical">Critical</option>
-                    </select>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">AI Insights</p>
+                    <h2 className="mt-2 text-xl font-semibold text-slate-950">Actionable alerts</h2>
                   </div>
+                  <span className="rounded-2xl bg-slate-100 px-4 py-2 text-sm text-slate-700">Live update</span>
+                </div>
+                <div className="mt-6 space-y-3">
+                  {insights.length > 0 ? (
+                    insights.map((insight, idx) => (
+                      <InsightItem key={idx} type={insight.type} message={insight.message} />
+                    ))
+                  ) : (
+                    <p className="text-sm text-slate-500">No insights available</p>
+                  )}
+                </div>
+              </div>
+            </section>
 
-                  <button
-                    onClick={() => {
-                      setSelectedStatus('');
-                      setSelectedPriority('');
-                    }}
-                    className="w-full rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-                  >
-                    Reset filters
+            <TrendChart
+              title="Weekly demand trend"
+              subtitle="Requests processed over the last 5 business days"
+              data={[
+                { label: 'Mon', value: 32, color: 'bg-cyan-500' },
+                { label: 'Tue', value: 54, color: 'bg-emerald-500' },
+                { label: 'Wed', value: 63, color: 'bg-sky-500' },
+                { label: 'Thu', value: 42, color: 'bg-indigo-500' },
+                { label: 'Fri', value: 77, color: 'bg-rose-500' },
+              ]}
+            />
+
+            <section className="grid gap-4 xl:grid-cols-[1.4fr_0.6fr]">
+              <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Activity</p>
+                    <h2 className="mt-2 text-2xl font-semibold text-slate-950">Demand distribution</h2>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 px-4 py-2 text-sm text-slate-700">
+                    Updated now
+                  </div>
+                </div>
+                <div className="mt-6 space-y-6">
+                  <div>
+                    <div className="mb-2 flex items-center justify-between text-sm text-slate-500">
+                      <span>Pending</span>
+                      <span>{stats.pending} requests</span>
+                    </div>
+                    <div className="h-4 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-full w-2/5 rounded-full bg-amber-400" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-2 flex items-center justify-between text-sm text-slate-500">
+                      <span>In Progress</span>
+                      <span>{stats.in_progress} requests</span>
+                    </div>
+                    <div className="h-4 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-full w-1/4 rounded-full bg-sky-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-2 flex items-center justify-between text-sm text-slate-500">
+                      <span>Completed</span>
+                      <span>{stats.completed} requests</span>
+                    </div>
+                    <div className="h-4 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-full w-1/2 rounded-full bg-emerald-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-2 flex items-center justify-between text-sm text-slate-500">
+                      <span>Delayed</span>
+                      <span>{stats.delayed} requests</span>
+                    </div>
+                    <div className="h-4 overflow-hidden rounded-full bg-slate-100">
+                      <div className="h-full w-1/5 rounded-full bg-rose-500" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <MetricCard title="Resolution rate" value="78%" subtitle="Compared to last week" trend="up" />
+                <MetricCard title="Average time" value="4.2 days" subtitle="Current SLA performance" trend="stable" />
+                <MetricCard title="Backlog risk" value="12%" subtitle="High-priority backlog" trend="down" />
+              </div>
+            </section>
+
+            <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Requests</p>
+                  <h2 className="mt-2 text-2xl font-semibold text-slate-950">Demand request table</h2>
+                </div>
+                <div className="grid gap-3 sm:auto-cols-max sm:grid-flow-col">
+                  <button className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:bg-slate-100">
+                    Export
+                  </button>
+                  <button className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                    Add request
                   </button>
                 </div>
               </div>
-
-              <div className="rounded-3xl border border-slate-800 bg-white p-6 shadow-sm">
-                <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Timeline</p>
-                <div className="mt-4 space-y-4 text-sm text-slate-700">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <span>New request created</span>
-                    <span className="text-slate-500">2h ago</span>
-                  </div>
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <span>Critical request escalated</span>
-                    <span className="text-slate-500">4h ago</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Weekly review ready</span>
-                    <span className="text-slate-500">1d ago</span>
-                  </div>
-                </div>
+              <div className="mt-6">
+                <DemandTable demands={demands} loading={demandsLoading} />
               </div>
-            </div>
-          </section>
-        </main>
+            </section>
+          </main>
+        </div>
       </div>
     </div>
   );
